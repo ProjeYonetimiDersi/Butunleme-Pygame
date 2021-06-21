@@ -1,5 +1,6 @@
 import pygame,random,sys
 from settings import *
+from sprites import *
 
 class Game:
     def __init__(self):
@@ -11,6 +12,8 @@ class Game:
 
     def new(self):
         self.all_sprites = pygame.sprite.Group()
+        self.player = Player()
+        self.all_sprites.add(self.player)
         self.run()
 
     def run(self):
@@ -23,6 +26,7 @@ class Game:
 
     def draw(self):
         self.screen.fill((0, 0, 0))
+        self.all_sprites.draw(self.screen)
 
     def update(self):
         self.all_sprites.update()
