@@ -7,11 +7,11 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.Surface((50, 50))
-        self.image.fill((0, 255, 0))
+        self.image.fill((0, 0, 255))
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH/2, HEIGHT/2)
         self.hiz = vector(0, 0)
-        self.ivme = vector(0, 0)
+        self.ivme = vector(0, 0.3)
 
     def update(self, *args):
         keys = pygame.key.get_pressed()
@@ -37,7 +37,10 @@ class Player(pygame.sprite.Sprite):
             if self.hiz.x < 0:
                 self.hiz.x += 0.3
 
+        self.hiz.y += self.ivme.y
+
         self.rect.x += self.hiz.x
+        self.rect.y += self.hiz.y
 
 
         if self.rect.x > WIDTH:
@@ -45,3 +48,12 @@ class Player(pygame.sprite.Sprite):
 
         if self.rect.right < 0:
             self.rect.right = WIDTH
+
+class Platform(pygame.sprite.Sprite):
+    def __init__(self, x, y, w, h):
+        super().__init__()
+        self.image = pygame.Surface((w, h))
+        self.image.fill((0, 255, 0))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
