@@ -1,6 +1,8 @@
 import pygame
 from settings import *
 
+vector = pygame.math.Vector2
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -8,32 +10,34 @@ class Player(pygame.sprite.Sprite):
         self.image.fill((0, 255, 0))
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH/2, HEIGHT/2)
-        self.acc = 0.5
-        self.vx = 0
+        self.hiz = vector(0, 0)
+        self.ivme = vector(0, 0)
 
     def update(self, *args):
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:
             if keys[pygame.K_RIGHT]:
-                if self.vx < 7:
-                    self.vx += self.acc
+                if self.hiz.x < 7:
+                    self.ivme.x = 0.3
                 else:
-                    self.vx = 7
+                    self.ivme.x = 0
 
             if keys[pygame.K_LEFT]:
-                if self.vx > -7:
-                    self.vx -= self.acc
+                if self.hiz.x > -7:
+                    self.ivme.x = -0.3
                 else:
-                    self.vx = -7
+                    self.ivme.x = 0
+
+            self.hiz.x += self.ivme.x
 
         else:
-            if self.vx > 0:
-                self.vx -= 0.3
-            if self.vx < 0:
-                self.vx += 0.3
+            if self.hiz.x > 0:
+                self.hiz.x -= 0.3
+            if self.hiz.x < 0:
+                self.hiz.x += 0.3
 
-        self.rect.x += self.vx
+        self.rect.x += self.hiz.x
 
 
         if self.rect.x > WIDTH:
