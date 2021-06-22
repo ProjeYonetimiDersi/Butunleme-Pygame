@@ -72,6 +72,15 @@ class Game:
                 if plat.rect.top >= HEIGHT:
                     plat.kill()
 
+        if self.player.rect.top > HEIGHT:
+            for sprite in self.all_sprites:
+                sprite.rect.y -= max(self.player.hiz.y, 15)
+                if sprite.rect.bottom < 0:
+                    sprite.kill()
+        if len(self.platforms) == 0:
+            self.playing = False
+
+
         while len(self.platforms) < 6:
             genislik = random.randrange(50, 100)
             p = Platform(random.randrange(0, WIDTH-genislik), random.randrange(-75, -20), genislik, 30)
