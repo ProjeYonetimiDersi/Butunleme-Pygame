@@ -9,6 +9,7 @@ class Game:
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
         self.running = True
+        self.sayac = 0
 
     def new(self):
         self.all_sprites = pygame.sprite.Group()
@@ -53,7 +54,11 @@ class Game:
             self.update()
 
     def draw(self):
-        self.screen.fill((0, 0, 0))
+        self.screen.fill((135, 206, 250))
+        if self.sayac %2 == 0:
+            self.ustyazi()
+        else:
+            pass
         self.all_sprites.draw(self.screen)
 
     def update(self):
@@ -98,8 +103,37 @@ class Game:
                 if event.key == pygame.K_SPACE:
                     self.player.zipla()
 
+    def girisEkrani(self):
+        resim = pygame.image.load("baslangic.jpg")
+        self.screen.blit(resim, resim.get_rect())
+        pygame.display.update()
+        self.tusBekleme()
+
+    def bitisEkrani(self):
+        resim = pygame.image.load("gover.jpg")
+        self.screen.blit(resim, resim.get_rect())
+        pygame.display.update()
+        self.tusBekleme()
+
+    def tusBekleme(self):
+        bekleme = True
+        while bekleme:
+            self.clock.tick(FPS)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    bekleme = False
+                    self.running = False
+                if event.type == pygame.KEYDOWN:
+                    bekleme = False
+
+    def ustyazi(self):
+        font = pygame.font.SysFont("Century Gothic", 25)
+        text = font.render("Zıpla!", True, (255, 255, 255))
+        self.screen.blit(text, (WIDTH/2-(text.get_size() [0]/2), 0))
 
 game = Game()
+game.girisEkrani()
 
 while game.running:
     game.new()
+    game.bitisEkrani()
