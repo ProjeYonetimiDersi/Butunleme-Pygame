@@ -21,7 +21,7 @@ class Game:
         self.platforms.add(p2)
 
 
-        self.player = Player()
+        self.player = Player(self)
 
 
         self.all_sprites.add(self.player)
@@ -46,10 +46,17 @@ class Game:
     def update(self):
         self.all_sprites.update()
 
-        carpismalar = pygame.sprite.spritecollide(self.player, self.platforms, dokill = False)
-        if carpismalar:
-            self.player.hiz.y = 0
-            self.player.rect.bottom = carpismalar[0].rect.top
+        if self.player.hiz.y > 0:
+            carpismalar = pygame.sprite.spritecollide(self.player, self.platforms, dokill = False)
+            if carpismalar:
+                self.player.hiz.y = 0
+                self.player.rect.bottom = carpismalar[0].rect.top
+
+        if self.player.hiz.y < 0:
+            carpismalar = pygame.sprite.spritecollide(self.player, self.platforms, dokill = False)
+            if carpismalar:
+                self.player.hiz.y = 0
+                self.player.rect.top = carpismalar[0].rect.bottom
 
         pygame.display.update()
 
@@ -57,6 +64,11 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.player.zipla()
+
 
 game = Game()
 
