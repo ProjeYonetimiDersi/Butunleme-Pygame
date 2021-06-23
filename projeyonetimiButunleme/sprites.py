@@ -11,18 +11,26 @@ class Spritesheet:
         image = pygame.Surface((width, height))
         image.blit(self.spritesheet, (0, 0), (x, y, width, height))
         image = pygame.transform.scale(image, (width//2, height//2))
+        image.set_colorkey((0, 0, 0))
         return image
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, oyun):
         super().__init__()
         self.oyun = oyun
-        self.image = self.oyun.spritesheet.get_image(614, 1063, 120, 191)
+        self.load_images()
+        self.sonZaman = 0
+        self.sayac = 0
+        self.image = self.beklemeler[0]
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH/2, HEIGHT/2)
         self.hiz = vector(0, 0)
         self.ivme = vector(0, 0.5)
+
+    def load_images(self):
+        self.beklemeler = [self.oyun.spritesheet.get_image(614, 1063, 120, 191),
+                      self.oyun.spritesheet.get_image(690, 406, 120, 201)]
 
     def zipla(self):
         self.rect.y += 1
@@ -32,6 +40,9 @@ class Player(pygame.sprite.Sprite):
 
 
     def update(self, *args):
+
+        self.animasyon()
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_RIGHT] or keys[pygame.K_LEFT]:
@@ -66,6 +77,16 @@ class Player(pygame.sprite.Sprite):
 
         if self.rect.right < 0:
             self.rect.right = WIDTH
+
+    def animasyon(self):
+        simdikiZaman = pygame.time.get_ticks()
+        if simdikiZaman - self.sonZaman > 350:
+            self.sonZaman = simdikiZaman
+            bottom = self.rect.midbottom
+            self.image = self.beklemeler[self.sayac % 2]
+            self.rect = self.image.get_rect()
+            self.rect.midbottom = bottom
+            self.sayac += 1
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, w, h):
