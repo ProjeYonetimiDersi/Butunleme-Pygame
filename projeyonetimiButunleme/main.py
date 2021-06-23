@@ -8,7 +8,11 @@ class Game:
         self.screen = pygame.display.set_mode((WIDTH,HEIGHT))
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
+        self.spritesheet = Spritesheet(SPRITESHEET)
         self.running = True
+        self.sayac = 0
+        self.skor = 0
+        self.maksimumSkor = 0
 
     def new(self):
         self.all_sprites = pygame.sprite.Group()
@@ -53,7 +57,8 @@ class Game:
             self.update()
 
     def draw(self):
-        self.screen.fill((0, 0, 0))
+        self.screen.fill((135, 206, 250))
+        self.ustyazi("Skor: {}".format(self.skor))
         self.all_sprites.draw(self.screen)
 
     def update(self):
@@ -71,6 +76,34 @@ class Game:
                 plat.rect.y += abs(self.player.hiz.y)
                 if plat.rect.top >= HEIGHT:
                     plat.kill()
+                    self.skor += 10
+
+        if self.player.rect.top > HEIGHT:
+            for sprite in self.all_sprites:
+                sprite.rect.y -= max(self.player.hiz.y, 15)
+                if sprite.rect.bottom < 0:
+                    sprite.kill()
+
+        if len(self.platforms) == 0:
+            try:
+                with open("skor.txt", "r") as dosya:
+                    kayitliSkor = int(dosya.read())
+                    if self.skor > kayitliSkor:
+                        with open("skor.txt", "w") as dosya:
+                            dosya.writelines(str(self.skor))
+                        self.maksimumSkor = self.skor
+                    else:
+                        with open("skor.txt","r") as dosya:
+                            skor = str(dosya.read())
+                            self.maksimumSkor = skor
+            except FileNotFoundError:
+                with open("skor.txt", "w") as dosya:
+                    dosya.writelines(str(self.skor))
+                    self.maksimumSkor = skor
+
+            self.skor = 0
+            self.playing = False
+
 
         while len(self.platforms) < 6:
             genislik = random.randrange(50, 100)
@@ -89,8 +122,42 @@ class Game:
                 if event.key == pygame.K_SPACE:
                     self.player.zipla()
 
+    def girisEkrani(self):
+        resim = pygame.image.load("baslangic.jpg")
+        self.screen.blit(resim, resim.get_rect())
+        pygame.display.update()
+        self.tusBekleme()
+
+    def bitisEkrani(self):
+        resim = pygame.image.load("gover.jpg")
+        self.screen.blit(resim, resim.get_rect())
+
+        font = pygame.font.SysFont("Century Gothic", 25)
+        text = font.render("En Yüksek Skor: {}".format(self.maksimumSkor), True, (0, 0, 0))
+        self.screen.blit(text, (WIDTH/2-(text.get_size() [0]/2), 480))
+
+        pygame.display.update()
+        self.tusBekleme()
+
+    def tusBekleme(self):
+        bekleme = True
+        while bekleme:
+            self.clock.tick(FPS)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    bekleme = False
+                    self.running = False
+                if event.type == pygame.KEYDOWN:
+                    bekleme = False
+
+    def ustyazi(self, yazi="Zıpla!"):
+        font = pygame.font.SysFont("Century Gothic", 25)
+        text = font.render(yazi, True, (255, 255, 255))
+        self.screen.blit(text, (WIDTH/2-(text.get_size() [0]/2), 0))
 
 game = Game()
+game.girisEkrani()
 
 while game.running:
     game.new()
+    game.bitisEkrani()

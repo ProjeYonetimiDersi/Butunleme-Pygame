@@ -3,12 +3,22 @@ from settings import *
 
 vector = pygame.math.Vector2
 
+class Spritesheet:
+    def __init__(self,resimler):
+        self.spritesheet = pygame.image.load(resimler)
+
+    def get_image(self, x, y, width, height):
+        image = pygame.Surface((width, height))
+        image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        image = pygame.transform.scale(image, (width//2, height//2))
+        return image
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, oyun):
         super().__init__()
         self.oyun = oyun
-        self.image = pygame.Surface((50, 50))
-        self.image.fill((0, 0, 255))
+        self.image = self.oyun.spritesheet.get_image(614, 1063, 120, 191)
+        self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH/2, HEIGHT/2)
         self.hiz = vector(0, 0)
