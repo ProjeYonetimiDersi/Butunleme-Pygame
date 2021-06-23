@@ -21,6 +21,7 @@ class Player(pygame.sprite.Sprite):
         self.load_images()
         self.sonZaman = 0
         self.sayac = 0
+        self.walking = False
         self.image = self.beklemeler[0]
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
@@ -31,6 +32,14 @@ class Player(pygame.sprite.Sprite):
     def load_images(self):
         self.beklemeler = [self.oyun.spritesheet.get_image(614, 1063, 120, 191),
                       self.oyun.spritesheet.get_image(690, 406, 120, 201)]
+
+        self.sag_yurumeler = [self.oyun.spritesheet.get_image(678, 860, 120, 201),
+                      self.oyun.spritesheet.get_image(692, 1458, 120, 207)]
+
+        self.sol_yurumeler = []
+
+        for yurume in self.sag_yurumeler:
+            self.sol_yurumeler.append(pygame.transform.flip(yurume, True, False))
 
     def zipla(self):
         self.rect.y += 1
@@ -68,25 +77,51 @@ class Player(pygame.sprite.Sprite):
 
         self.hiz.y += self.ivme.y
 
+        if abs(self.hiz.x) < 0.2:
+            self.hiz.x = 0
+
         self.rect.x += self.hiz.x
         self.rect.y += self.hiz.y
 
 
         if self.rect.x > WIDTH:
-            self.rect.x = 0
+            self.rect.x = 0 - self.rect.width
 
         if self.rect.right < 0:
-            self.rect.right = WIDTH
+            self.rect.right = WIDTH + self.rect.width
 
     def animasyon(self):
         simdikiZaman = pygame.time.get_ticks()
-        if simdikiZaman - self.sonZaman > 350:
-            self.sonZaman = simdikiZaman
-            bottom = self.rect.midbottom
-            self.image = self.beklemeler[self.sayac % 2]
-            self.rect = self.image.get_rect()
-            self.rect.midbottom = bottom
-            self.sayac += 1
+
+        if self.hiz.x != 0:
+            self.walking = True
+        else:
+            self.walking = False
+
+        if self.walking:
+            if simdikiZaman - self.sonZaman > 250:
+                self.sonZaman = simdikiZaman
+                if self.hiz.x > 0:
+                    bottom = self.rect.midbottom
+                    self.image = self.sag_yurumeler[self.sayac % 2]
+                    self.rect = self.image.get_rect()
+                    self.rect.midbottom = bottom
+                    self.sayac += 1
+                else:
+                    bottom = self.rect.midbottom
+                    self.image = self.sol_yurumeler[self.sayac % 2]
+                    self.rect = self.image.get_rect()
+                    self.rect.midbottom = bottom
+                    self.sayac += 1
+
+        if not self.walking:
+            if simdikiZaman - self.sonZaman > 250:
+                self.sonZaman = simdikiZaman
+                bottom = self.rect.midbottom
+                self.image = self.beklemeler[self.sayac % 2]
+                self.rect = self.image.get_rect()
+                self.rect.midbottom = bottom
+                self.sayac += 1
 
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y, w, h):
