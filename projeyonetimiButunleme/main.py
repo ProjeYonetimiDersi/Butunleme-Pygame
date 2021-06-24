@@ -60,6 +60,7 @@ class Game:
         self.screen.fill((135, 206, 250))
         self.ustyazi("Skor: {}".format(self.skor))
         self.all_sprites.draw(self.screen)
+        self.screen.blit(self.player.image, self.player.rect)
 
     def update(self):
         self.all_sprites.update()
@@ -67,8 +68,9 @@ class Game:
         if self.player.hiz.y > 0:
             carpismalar = pygame.sprite.spritecollide(self.player, self.platforms, dokill = False)
             if carpismalar:
-                self.player.hiz.y = 0
-                self.player.rect.bottom = carpismalar[0].rect.top
+                if carpismalar[0].rect.center[1] + 7 > self.player.rect.bottom:
+                    self.player.hiz.y = 0
+                    self.player.rect.bottom = carpismalar[0].rect.top
 
         if self.player.rect.top < HEIGHT/4:
             self.player.rect.y += max(abs(self.player.hiz.y), 3)
@@ -107,7 +109,7 @@ class Game:
 
         while len(self.platforms) < 6:
             genislik = random.randrange(50, 100)
-            p = Platform(self, random.randrange(0, WIDTH-genislik), random.randrange(-75, -20))
+            p = Platform(self, random.randrange(0, WIDTH-genislik), random.randrange(-40, 0))
             self.platforms.add(p)
             self.all_sprites.add(p)
 
