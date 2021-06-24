@@ -1,5 +1,6 @@
 import pygame
 from settings import *
+from random import choice
 
 vector = pygame.math.Vector2
 
@@ -124,10 +125,11 @@ class Player(pygame.sprite.Sprite):
                 self.sayac += 1
 
 class Platform(pygame.sprite.Sprite):
-    def __init__(self, x, y, w, h):
+    def __init__(self, oyun, x, y):
         super().__init__()
-        self.image = pygame.Surface((w, h))
-        self.image.fill((0, 255, 0))
+        self.oyun = oyun
+        self.image = choice([self.oyun.spritesheet.get_image(0, 768, 380, 94),
+                      self.oyun.spritesheet.get_image(213, 1764, 201, 100)])
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
