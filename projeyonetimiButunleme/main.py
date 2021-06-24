@@ -23,6 +23,7 @@ class Game:
 
         self.all_sprites = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
+        self.powerUps = pygame.sprite.Group()
 
         p1 = Platform(self, 0, HEIGHT-30)
         p2 = Platform(self, WIDTH/2-50, 500)
@@ -76,7 +77,8 @@ class Game:
         if self.player.hiz.y > 0:
             carpismalar = pygame.sprite.spritecollide(self.player, self.platforms, dokill = False)
             if carpismalar:
-                if carpismalar[0].rect.center[1] + 7 > self.player.rect.bottom:
+                durum = self.player.rect.midbottom[0] <= carpismalar[0].rect.left - 10 or self.player.rect.midbottom[0] >= carpismalar[0].rect.right + 10
+                if carpismalar[0].rect.center[1] + 7 > self.player.rect.bottom and not durum:
                     self.player.hiz.y = 0
                     self.player.rect.bottom = carpismalar[0].rect.top
 
@@ -87,6 +89,10 @@ class Game:
                 if plat.rect.top >= HEIGHT:
                     plat.kill()
                     self.skor += 10
+
+        powerGain = pygame.sprite.spritecollide(self.player, self.powerUps, True)
+        if powerGain:
+            self.player.hiz.y = -35
 
         if self.player.rect.top > HEIGHT:
             for sprite in self.all_sprites:
@@ -120,6 +126,11 @@ class Game:
             p = Platform(self, random.randrange(0, WIDTH-genislik), random.randrange(-40, 0))
             self.platforms.add(p)
             self.all_sprites.add(p)
+
+            if random.randint(1, 10) == 1:
+                powerup = PowerUp(self, p)
+                self.powerUps.add(powerup)
+                self.all_sprites.add(powerup)
 
         pygame.display.update()
 

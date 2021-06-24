@@ -134,3 +134,18 @@ class Platform(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+class PowerUp(pygame.sprite.Sprite):
+    def __init__(self, oyun, platform):
+        super().__init__()
+        self.oyun = oyun
+        self.platform = platform
+        self.image = self.oyun.spritesheet.get_image(820, 1805, 71, 70)
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = self.platform.rect.midtop
+
+    def update(self, *args):
+        self.rect.midbottom = self.platform.rect.midtop
+
+        if not self.oyun.platforms.has(self.platform):
+            self.kill()
