@@ -46,6 +46,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += 1
         temasVarmi = pygame.sprite.spritecollide(self, self.oyun.platforms, False)
         if temasVarmi:
+            self.oyun.ziplamaSesi.play()
             self.hiz.y -= 15
 
 

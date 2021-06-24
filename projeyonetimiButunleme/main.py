@@ -14,7 +14,13 @@ class Game:
         self.skor = 0
         self.maksimumSkor = 0
 
+        self.ziplamaSesi = pygame.mixer.Sound("muzik/zipla.wav")
+        self.ziplamaSesi.set_volume(0.1)
+
     def new(self):
+        pygame.mixer.music.load("muzik/mainmusic.mp3")
+        pygame.mixer.music.set_volume(0.5)
+
         self.all_sprites = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
 
@@ -50,11 +56,13 @@ class Game:
 
     def run(self):
         self.playing = True
+        pygame.mixer.music.play()
         while self.playing:
             self.clock.tick(FPS)
             self.events()
             self.draw()
             self.update()
+        pygame.mixer.music.fadeout(1000)
 
     def draw(self):
         self.screen.fill((135, 206, 250))
@@ -125,10 +133,14 @@ class Game:
                     self.player.zipla()
 
     def girisEkrani(self):
+        pygame.mixer.music.load("muzik/giris_ekrani.ogg")
+        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.play()
         resim = pygame.image.load("baslangic.jpg")
         self.screen.blit(resim, resim.get_rect())
         pygame.display.update()
         self.tusBekleme()
+        pygame.mixer.music.fadeout(500)
 
     def bitisEkrani(self):
         resim = pygame.image.load("gover.jpg")
