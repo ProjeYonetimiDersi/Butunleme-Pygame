@@ -149,3 +149,66 @@ class PowerUp(pygame.sprite.Sprite):
 
         if not self.oyun.platforms.has(self.platform):
             self.kill()
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, oyun, platform):
+        super().__init__()
+        self.oyun = oyun
+        self.platform = platform
+        self.upload_images()
+
+        self.image = self.bekleme
+        self.rect = self.image.get_rect()
+        self.rect.midbottom = self.platform.rect.midtop
+        self.hareketSonZaman = 0
+        self.sayac = 0
+
+        self.vx = 3
+
+    def upload_images(self):
+        self.bekleme = self.oyun.spritesheet.get_image(814, 1417, 90, 155)
+
+        self.sag_yurumeler = [self.oyun.spritesheet.get_image(704, 1256, 120, 159),
+                              self.oyun.spritesheet.get_image(812, 296, 90, 155)]
+        self.sol_yurumeler = []
+
+        for yurume in self.sag_yurumeler:
+            self.sol_yurumeler.append(pygame.transform.flip(yurume, True, False))
+
+    def update(self, *args):
+        self.rect.bottom = self.platform.rect.top
+
+        if not self.oyun.platforms.has(self.platform):
+            self.kill()
+
+        self.rect.x += self.vx
+
+        if self.rect.right + 4 > self.platform.rect.right or self.rect.x - 4 < self.platform.rect.left:
+            kayitvx = self.vx
+            self.vx = 0
+
+            bottom = self.rect.midbottom
+            self.image = self.bekleme
+            self.rect = self.image.get_rect()
+            self.rect.midbottom = bottom
+
+            self.vx = kayitvx * -1
+
+        if self.vx > 0:
+            simdi = pygame.time.get_ticks()
+            if simdi - self.hareketSonZaman > 250:
+                self.hareketSonZaman = simdi
+                bottom = self.rect.midbottom
+                self.image = self.sag_yurumeler[self.sayac % 2]
+                self.rect = self.image.get_rect()
+                self.rect.midbottom = bottom
+                self.sayac += 1
+        else:
+            simdi = pygame.time.get_ticks()
+            if simdi - self.hareketSonZaman > 250:
+                self.hareketSonZaman = simdi
+                bottom = self.rect.midbottom
+                self.image = self.sol_yurumeler[self.sayac % 2]
+                self.rect = self.image.get_rect()
+                self.rect.midbottom = bottom
+                self.sayac += 1

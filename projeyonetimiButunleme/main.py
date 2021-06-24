@@ -24,6 +24,7 @@ class Game:
         self.all_sprites = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
         self.powerUps = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
 
         p1 = Platform(self, 0, HEIGHT-30)
         p2 = Platform(self, WIDTH/2-50, 500)
@@ -94,6 +95,10 @@ class Game:
         if powerGain:
             self.player.hiz.y = -35
 
+        dusmanTemasi = pygame.sprite.spritecollide(self.player, self.enemies, False)
+        if dusmanTemasi:
+            self.playing = False
+
         if self.player.rect.top > HEIGHT:
             for sprite in self.all_sprites:
                 sprite.rect.y -= max(self.player.hiz.y, 15)
@@ -131,6 +136,12 @@ class Game:
                 powerup = PowerUp(self, p)
                 self.powerUps.add(powerup)
                 self.all_sprites.add(powerup)
+
+            if p.rect.width > 100:
+                if random.randint(1, 10):
+                    enemy = Enemy(self, p)
+                    self.enemies.add(enemy)
+                    self.all_sprites.add(enemy)
 
         pygame.display.update()
 
