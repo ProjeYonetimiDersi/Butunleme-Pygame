@@ -95,8 +95,9 @@ class Game:
         if powerGain:
             self.player.hiz.y = -35
 
-        dusmanTemasi = pygame.sprite.spritecollide(self.player, self.enemies, False)
+        dusmanTemasi = pygame.sprite.spritecollide(self.player, self.enemies, False, pygame.sprite.collide_mask)
         if dusmanTemasi:
+            self.skor = 0
             self.playing = False
 
         if self.player.rect.top > HEIGHT:
@@ -138,7 +139,7 @@ class Game:
                 self.all_sprites.add(powerup)
 
             if p.rect.width > 100:
-                if random.randint(1, 10):
+                if random.randint(1, 5) == 1:
                     enemy = Enemy(self, p)
                     self.enemies.add(enemy)
                     self.all_sprites.add(enemy)

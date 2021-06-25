@@ -92,6 +92,8 @@ class Player(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.rect.right = WIDTH + self.rect.width
 
+        self.mask = pygame.mask.from_surface(self.image)
+
     def animasyon(self):
         simdikiZaman = pygame.time.get_ticks()
 
@@ -212,3 +214,5 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect = self.image.get_rect()
                 self.rect.midbottom = bottom
                 self.sayac += 1
+
+        self.mask = pygame.mask.from_surface(self.image)
