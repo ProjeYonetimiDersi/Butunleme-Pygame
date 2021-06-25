@@ -10,6 +10,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.spritesheet = Spritesheet(SPRITESHEET)
         self.running = True
+        self.platformsayac = 0
         self.sayac = 0
         self.skor = 0
         self.maksimumSkor = 0
@@ -80,6 +81,7 @@ class Game:
             if carpismalar:
                 durum = self.player.rect.midbottom[0] <= carpismalar[0].rect.left - 10 or self.player.rect.midbottom[0] >= carpismalar[0].rect.right + 10
                 if carpismalar[0].rect.center[1] + 7 > self.player.rect.bottom and not durum:
+                    self.player.jumping = True
                     self.player.hiz.y = 0
                     self.player.rect.bottom = carpismalar[0].rect.top
 
@@ -97,6 +99,22 @@ class Game:
 
         dusmanTemasi = pygame.sprite.spritecollide(self.player, self.enemies, False, pygame.sprite.collide_mask)
         if dusmanTemasi:
+            try:
+                with open("skor.txt", "r") as dosya:
+                    kayitliSkor = int(dosya.read())
+                    if self.skor > kayitliSkor:
+                        with open("skor.txt", "w") as dosya:
+                            dosya.writelines(str(self.skor))
+                        self.maksimumSkor = self.skor
+                    else:
+                        with open("skor.txt","r") as dosya:
+                            skor = str(dosya.read())
+                            self.maksimumSkor = skor
+            except FileNotFoundError:
+                with open("skor.txt", "w") as dosya:
+                    dosya.writelines(str(self.skor))
+                    self.maksimumSkor = skor
+
             self.skor = 0
             self.playing = False
 
@@ -128,8 +146,19 @@ class Game:
 
 
         while len(self.platforms) < 6:
-            genislik = random.randrange(50, 100)
-            p = Platform(self, random.randrange(0, WIDTH-genislik), random.randrange(-40, 0))
+            if self.platformsayac == 0:
+                genislik = random.randrange(50, 100)
+                p = Platform(self, random.randrange(0, WIDTH - genislik), random.randrange(-2, 0))
+            else:
+                genislik = random.randrange(50, 100)
+                p = Platform(self, random.randrange(0, WIDTH - genislik), random.randrange(-42, -2))
+
+            self.platformsayac += 1
+
+            if len(self.platforms) == 5:
+                self.platformsayac = 0
+
+
             self.platforms.add(p)
             self.all_sprites.add(p)
 
@@ -139,7 +168,7 @@ class Game:
                 self.all_sprites.add(powerup)
 
             if p.rect.width > 100:
-                if random.randint(1, 5) == 1:
+                if random.randint(1, 10) == 1:
                     enemy = Enemy(self, p)
                     self.enemies.add(enemy)
                     self.all_sprites.add(enemy)

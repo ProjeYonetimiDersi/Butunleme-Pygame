@@ -22,6 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.load_images()
         self.sonZaman = 0
         self.sayac = 0
+        self.jumping = False
         self.walking = False
         self.image = self.beklemeler[0]
         self.image.set_colorkey((0, 0, 0))
@@ -45,9 +46,10 @@ class Player(pygame.sprite.Sprite):
     def zipla(self):
         self.rect.y += 1
         temasVarmi = pygame.sprite.spritecollide(self, self.oyun.platforms, False)
-        if temasVarmi:
+        if temasVarmi and self.jumping:
             self.oyun.ziplamaSesi.play()
             self.hiz.y -= 15
+            self.jumping = False
 
 
     def update(self, *args):
